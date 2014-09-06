@@ -134,11 +134,11 @@ class GarminUConfigurator:
 		p = path[0:idx] + '/'.join(path[idx:].split('/')[:3])
 		p = '/sys/' + p[3:]
 		print (p)
-		idVendor = os.popen('cat '+p+'/idVendor').read()
-		idProduct = os.popen('cat '+p+'/idProduct').read()
+		idVendor = os.popen('cat '+p+'/idVendor').read()[:-1]
+		idProduct = os.popen('cat '+p+'/idProduct').read()[:-1]
 		iViP = idVendor + ':' +idProduct
 		print ('vendor product: ',iViP)
-		return '091e:2464'
+		return iViP
 
 	def excludeNoStoDev(self):
 		acceptableVp = []
