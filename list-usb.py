@@ -105,24 +105,40 @@ class GarminUConfigurator:
 				self.selected = 0
 				self.devId = self.devices[0][0]
 			self.getSerial(self.devId)
-			print ('seriaLL',self.iSerial)
 			if not self.iSerial:
 				isKo = not self.askIfOk()
 			else:
 				isKo = False
 		print(self.selected,self.iSerial);
+		self.parseMountedDev()
+		self.findFitPath()
+		print (self.guesdUsb)
 
 	def getSelectedVendProd(self):
 		return self.devId
 
+	def findFitPath(self):
+		mp = self.guesdUsb[self.selected][-1]
+		print('mp '+mp)
+
 	def parseMountedDev(self):
+		devList = []
+		for x in self.guesdUsb:
+			devList.append('/dev/'+x[0])
 		mountcmd = os.popen('mount').read().split('\n')
 		self.mountedDev = []
 		for x in mountcmd:
 			match = re.match('(/dev/.*)\s.*\s(/[^\s]*)(.*)',x)
 			if match:
-				l = match.groups(1)
-				self.mountedDev.append(list(l))
+				l = list(match.groups(1))
+				try:
+					idx = devList.index(l[0])
+					self.guesdUsb[idx].append(l[1])
+				except ValueError:
+					pass
+				mat2 = re.match('/dev/(.*)',l[0])
+				if l[0] in devList:
+					self.mountedDev.append(l)
 
 	def guessUsbStorage(self):
 		blocks = os.popen('ls -l /sys/block').read().split('\n')[1:-1]
@@ -146,21 +162,24 @@ class GarminUConfigurator:
 
 	def excludeNoStoDev(self):
 		acceptableVp = []
+		self.gDict = {}
 		for x in self.guesdUsb:
 			path = x[1]
 			iViP = self.getVendorProduct(x[1])
 			acceptableVp.append(iViP)
+			self.gDict[iViP] = x
 		newDevices = []
 		for x in self.devices:
 			if x[0] in acceptableVp:
+				#x.append(index
 				newDevices.append(x)
 		self.devices = newDevices
 
 GC = GarminUConfigurator()
 GC.selectDev()
 print(GC.getSelectedVendProd())
-GC.parseMountedDev()
-print(GC.mountedDev)
-print (GC.guessUsbStorage())
+#print(GC.mountedDev)
+#print (GC.guessUsbStorage())
+print (GC.devices)
 print( GC.guesdUsb)
 #print devices
