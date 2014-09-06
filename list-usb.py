@@ -119,7 +119,9 @@ class GarminUConfigurator:
 
 	def findFitPath(self):
 		mp = self.guesdUsb[self.selected][-1]
-		print('mp '+mp)
+		fout = os.popen('find ' + mp + " |grep 'Activities\/'").read().split('\n')[-2]
+		lsla = fout.rfind('/');
+		self.ActivitiesPath = fout[:lsla]
 
 	def parseMountedDev(self):
 		devList = []
