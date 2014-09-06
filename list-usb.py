@@ -18,6 +18,8 @@ class GarminUConfigurator:
 	def __init__(self):
 		self.keywords = ['garmin','mouse','intel']
 		self.getDevices()
+		self.guessUsbStorage()
+		self.excludeNoStoDev()
 
 	def getDevices(self):
 		usblist = os.popen('lsusb').read().split('\n')[0:-1]
@@ -126,6 +128,24 @@ class GarminUConfigurator:
 			match = re.search('/usb',x[10])
 			if match:
 				self.guesdUsb.append( [x[8],x[10]] )
+
+	def getVendorProduct(self,path):
+		idx = path.index('usb')
+		p = path[0:idx] + '/'.join(path[idx:].split('/')[:3])
+		print (p)
+		return '091e:2464'
+
+	def excludeNoStoDev(self):
+		acceptableVp = []
+		for x in self.guesdUsb:
+			path = x[1]
+			iViP = self.getVendorProduct(x[1])
+			acceptableVp.append(iViP)
+		newDevices = []
+		for x in self.devices:
+			if x[0] in acceptableVp:
+				newDevices.append(x)
+		self.devices = newDevices
 
 GC = GarminUConfigurator()
 GC.selectDev()
