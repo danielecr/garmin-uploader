@@ -132,7 +132,12 @@ class GarminUConfigurator:
 	def getVendorProduct(self,path):
 		idx = path.index('usb')
 		p = path[0:idx] + '/'.join(path[idx:].split('/')[:3])
+		p = '/sys/' + p[3:]
 		print (p)
+		idVendor = os.popen('cat '+p+'/idVendor').read()
+		idProduct = os.popen('cat '+p+'/idProduct').read()
+		iViP = idVendor + ':' +idProduct
+		print ('vendor product: ',iViP)
 		return '091e:2464'
 
 	def excludeNoStoDev(self):
