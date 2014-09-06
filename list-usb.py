@@ -112,8 +112,13 @@ class GarminUConfigurator:
 		print(self.selected,self.iSerial);
 		self.parseMountedDev()
 		self.findFitPath()
+		self.setVendProd()
 		print (self.guesdUsb)
 
+	def setVendProd(self):
+		ds = self.devId.split(':')
+		(self.idVendor,self.idProduct) = ds
+		
 	def getSelectedVendProd(self):
 		return self.devId
 
@@ -177,11 +182,16 @@ class GarminUConfigurator:
 				newDevices.append(x)
 		self.devices = newDevices
 
+	def readConfReplace(self,filename):
+		return open(filename).read().replace('%vendor',self.idVendor).replace('%product',self.idProduct)
+
 GC = GarminUConfigurator()
 GC.selectDev()
 print(GC.getSelectedVendProd())
 #print(GC.mountedDev)
 #print (GC.guessUsbStorage())
-print (GC.devices)
+print (GC.idVendor,GC.idProduct)
 print( GC.guesdUsb)
 #print devices
+
+print (GC.readConfReplace('data/88-garmin-uploader.rules') )
