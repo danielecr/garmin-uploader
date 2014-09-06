@@ -99,7 +99,11 @@ class GarminUConfigurator:
 		isKo = True
 		while isKo:
 			self.showDevices()
-			self.userSelect()
+			if len(self.devices) >1:
+				self.userSelect()
+			else:
+				self.selected = 0
+				self.devId = self.devices[0][0]
 			self.getSerial(self.devId)
 			print ('seriaLL',self.iSerial)
 			if not self.iSerial:
