@@ -1,0 +1,3 @@
+# execute garminuploader on garmin configured devices
+ACTION=="add", SUBSYSTEM="usb", ATTRS{idVendor}="%vendor", ATTRS{idProduct}=="%product" IMPORT{program}="/lib/udev/garmin-uploader.py"
+
